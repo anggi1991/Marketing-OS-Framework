@@ -14,7 +14,7 @@
   "devDependencies": {
     "@agent-runtime/core": "*",
     "@types/amqplib": "^0.10.5",
-    "typescript": "^5.5.0"
+    "typescript": "^7.0.2"
   },
   "author": "anggi1991",
   "license": "MIT"
