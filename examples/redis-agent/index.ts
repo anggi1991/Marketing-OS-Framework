@@ -1,16 +1,15 @@
-import { Runtime, Agent, RedisAdapter } from "../../src";
+import { Runtime, Agent } from "@agent-runtime/core";
+import { RedisPlugin } from "@agent-runtime/plugin-redis";
 
-// Initialize a Redis Adapter pointing to a local instance
-// In a real application, you might use process.env.REDIS_URL
-const redisAdapter = new RedisAdapter({
+// Configure the runtime
+const runtime = new Runtime();
+
+// Use the Redis plugin to hook the distributed EventBus adapter
+runtime.use(new RedisPlugin({
   host: "127.0.0.1",
   port: 6379,
-});
+}));
 
-// Configure the runtime with the Redis Adapter
-const runtime = new Runtime({
-  eventBusAdapter: redisAdapter,
-});
 
 /**
  * Node 1: A service that listens for orders.
@@ -22,9 +21,9 @@ class OrderFulfillmentAgent extends Agent {
       // Simulate processing
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      this.bus.publish({
-        type: "order.shipped",
-        payload: { orderId: event.payload.orderId, trackingNumber: "TRK12345" }
+      await this.bus.publish({
+        name: "order.processed",
+        payload: { ...event.payload, status: "PROCESSED" },
       });
     });
   }
@@ -42,7 +41,7 @@ async function run() {
   setTimeout(() => {
     console.log("Publishing 'order.created' event to Redis...");
     runtime.publish({
-      type: "order.created",
+      name: "order.created",
       payload: { email: "customer@example.com", orderId: "ORD-999" }
     });
   }, 2000);

@@ -1,6 +1,6 @@
 import { EventBus } from '../../src/events/EventBus';
 import { InMemoryAdapter } from '../../src/events/adapters/InMemoryAdapter';
-import { LuminaEvent } from '../../src/events/EventBus';
+import { RuntimeEvent } from '../../src/events/EventBus';
 
 describe('EventBus with InMemoryAdapter', () => {
   let bus: EventBus;
@@ -20,13 +20,13 @@ describe('EventBus with InMemoryAdapter', () => {
     const handler = jest.fn();
     bus.subscribe('test.event', handler);
 
-    const event: LuminaEvent = { type: 'test.event', payload: { foo: 'bar' } };
+    const event: RuntimeEvent = { name: 'test.event', payload: { foo: 'bar' } };
     await bus.publish(event);
 
     expect(handler).toHaveBeenCalledTimes(1);
     expect(handler).toHaveBeenCalledWith(
       expect.objectContaining({
-        type: 'test.event',
+        name: 'test.event',
         payload: { foo: 'bar' }
       })
     );
@@ -36,7 +36,7 @@ describe('EventBus with InMemoryAdapter', () => {
     const handler = jest.fn();
     bus.subscribe('test.event', handler);
 
-    await bus.publish({ type: 'test.event', payload: {} });
+    await bus.publish({ name: 'test.event', payload: {} });
 
     expect(handler).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -50,8 +50,8 @@ describe('EventBus with InMemoryAdapter', () => {
     const handler = jest.fn();
     bus.subscribe('*', handler);
 
-    await bus.publish({ type: 'test.random', payload: {} });
-    await bus.publish({ type: 'test.another', payload: {} });
+    await bus.publish({ name: 'test.random', payload: {} });
+    await bus.publish({ name: 'test.another', payload: {} });
 
     expect(handler).toHaveBeenCalledTimes(2);
   });

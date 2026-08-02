@@ -1,0 +1,14 @@
+{
+  "name": "basic-agent-example",
+  "version": "0.3.0",
+  "private": true,
+  "scripts": {
+    "start": "ts-node index.ts"
+  },
+  "dependencies": {
+    "@agent-runtime/core": "*"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2"
+  }
+}

@@ -1,16 +1,17 @@
-import { EventBus, LuminaEvent } from '../events/EventBus';
-import { AIProvider } from '../providers/AIProvider';
+import { EventBus } from '../events/EventBus';
+import { Runtime } from '../Runtime';
 
 export abstract class Agent {
   protected bus!: EventBus;
-  protected ai!: AIProvider;
+  protected runtime!: Runtime;
 
   /**
-   * Called internally by the Runtime when the agent is registered.
+   * Initializes the agent with the event bus and runtime.
+   * This is called automatically by the Runtime.
    */
-  public initialize(bus: EventBus, ai: AIProvider): void {
+  public initialize(bus: EventBus, runtime: Runtime): void {
     this.bus = bus;
-    this.ai = ai;
+    this.runtime = runtime;
     this.onStart();
   }
 

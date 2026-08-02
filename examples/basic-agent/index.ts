@@ -1,4 +1,4 @@
-import { Runtime, Agent, EventBus, AIProvider, AIProviderOptions } from '../../src';
+import { Runtime, Agent, EventBus, AIProvider, AIProviderOptions } from '@agent-runtime/core';
 
 /**
  * A mock AI Provider for demonstration purposes.
@@ -26,11 +26,11 @@ class LeadScoringAgent extends Agent {
     this.bus.subscribe('lead.created', async (event) => {
       console.log(`[LeadScoringAgent] Received lead:`, event.payload);
       
-      const analysis = await this.ai.analyze(event.payload);
+      const analysis = await this.runtime.getProvider<AIProvider>('AIProvider').analyze(event.payload);
       console.log(`[LeadScoringAgent] AI Decision:`, analysis);
 
       await this.bus.publish({
-        type: 'lead.scored',
+        name: 'lead.scored',
         payload: {
           originalLead: event.payload,
           score: analysis.score,
@@ -48,7 +48,7 @@ async function bootstrap() {
   const runtime = new Runtime();
   
   // Setup the provider
-  runtime.use(new MockAIProvider());
+  runtime.registerProvider('AIProvider', new MockAIProvider());
   
   // Register our agent
   runtime.register(new LeadScoringAgent());
@@ -60,8 +60,8 @@ async function bootstrap() {
   setTimeout(() => {
     console.log('\n--- Simulating External Webhook ---');
     runtime.publish({
-      type: 'lead.created',
-      payload: { email: 'ceo@bigcompany.com', name: 'John Doe' }
+      name: 'lead.created',
+      payload: { email: 'ceo@bigcompany.com', fullName: 'John Doe' } // Changed 'name' to 'fullName' to avoid collision with event.name
     });
   }, 1000);
 }

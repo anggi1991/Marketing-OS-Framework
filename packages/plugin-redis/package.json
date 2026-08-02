@@ -1,0 +1,15 @@
+{
+  "name": "@agent-runtime/plugin-redis",
+  "version": "0.3.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "ioredis": "^5.3.0"
+  },
+  "peerDependencies": {
+    "@agent-runtime/core": "*"
+  }
+}

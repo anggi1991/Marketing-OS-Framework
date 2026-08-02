@@ -1,0 +1,15 @@
+{
+  "name": "redis-agent-example",
+  "version": "0.3.0",
+  "private": true,
+  "scripts": {
+    "start": "ts-node index.ts"
+  },
+  "dependencies": {
+    "@agent-runtime/core": "*",
+    "@agent-runtime/plugin-redis": "*"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2"
+  }
+}
