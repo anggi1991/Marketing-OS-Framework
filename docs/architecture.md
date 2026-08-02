@@ -46,3 +46,46 @@ Digunakan ketika Anda membutuhkan transformasi event secara sekuensial sebelum e
 
 ### 5. `Plugins`
 Setiap library eksternal (Redis, OpenAI, Stripe) masuk ke dalam framework melalui antarmuka `RuntimePlugin`. Plugin diizinkan untuk mendaftarkan `Adapter` atau `Provider` ke dalam Capability Registry.
+
+---
+
+## Evolusi Arsitektur (Architecture Evolution)
+
+Framework ini berevolusi untuk menjaga inti (core) tetap ringan.
+
+```text
+2026
+
+v0.1
+[ Runtime Monolith ]
+(EventBus in-memory, LLM hardcoded)
+       ↓
+
+v0.2
+[ Adapter Pattern ]
+(EventBus dipisah menjadi Adapter yang bisa diganti)
+       ↓
+
+v0.3
+[ Plugin System ]
+(Semua modul ekstensi dikelola via plugin)
+       ↓
+
+v0.4
+[ Provider Pattern ]
+(LLM dan third-party services diekstraksi menjadi Provider)
+       ↓
+
+v0.5
+[ Workflow DSL ]
+(Pipeline statis beralih ke engine dinamis berbasis JSON/YAML)
+       ↓
+
+v0.6
+[ Distributed Runtime ]
+(Eksekusi antar node/server menggunakan Discovery)
+       ↓
+
+v1.0
+[ Stable Framework ]
+```

@@ -1,32 +1,42 @@
-# Roadmap
+# Roadmap (Product Features)
 
-This document outlines the high-level goals and upcoming milestones for the **@agent-runtime** framework.
+Dokumen ini menjelaskan evolusi **fitur** dari framework `@agent-runtime/core` (apa yang dibangun). Untuk melihat kematangan kualitas proyek *open-source*, silakan lihat `OPEN_SOURCE_READINESS.md`.
 
-## ✅ Phase 1: Core Stabilization (v0.3.0)
-- [x] Monorepo Architecture with NPM Workspaces
-- [x] Extensible Plugin Architecture (`runtime.use()`)
-- [x] Provider & Adapter Capability Registry
-- [x] RFC Process Initialization
-- [x] Comprehensive SDK Documentation
-- [x] Strict Semantic Versioning Policy
-- [x] Compatibility Matrix
+## [v0.1] - Foundation
+- [x] In-memory `EventBus` pub/sub engine.
+- [x] Abstract `Agent` class for autonomous workers.
+- [x] Sequential `Pipeline` processing.
+- [x] Unified `Runtime` entry point.
 
-## ✅ Phase 2: Alpha Release
-- [x] Local `npm pack` validation
-- [x] Release notes preparation
-- [x] CHANGELOG tracking
+## [v0.2] - Architecture (Current)
+- [x] Plugin SDK & Lifecycle.
+- [x] Provider API (Agnostic interfaces).
+- [x] Adapter API (Infrastructure replacement).
+- [x] Capability Registry (IoC / Dependency Injection).
+- [x] Monorepo & Workspaces.
 
-## 🔄 Phase 3: Open Source Growth
-Fokus pada penerimaan dan umpan balik komunitas.
-- [ ] Publish `@agent-runtime/core` ke NPM Registry publik.
-- [ ] Menerima dan merespons Issues & Pull Requests dari komunitas.
-- [ ] Membangun website dokumentasi dan panduan interaktif.
-- [ ] Stabilisasi API publik berdasarkan *real-world feedback*.
+## [v0.3] - Messaging
+- [ ] RabbitMQ Adapter.
+- [ ] Retry Mechanism (Exponential Backoff).
+- [ ] Dead-Letter Queues (DLQ) support.
 
-## 🔄 Phase 4: Ecosystem Expansion
-Ekspansi plugin secara horizontal.
-- [ ] `@agent-runtime/plugin-rabbitmq` (Enterprise Queues)
-- [ ] `@agent-runtime/plugin-kafka` (High-Throughput Streaming)
-- [ ] `@agent-runtime/plugin-workflow` (Declarative JSON/YAML Workflows)
+## [v0.4] - Workflow
+- [ ] Workflow DSL (JSON/YAML based).
+- [ ] State Machine Execution.
+- [ ] Human Approval / Human-in-the-loop steps.
 
-*Catatan: Keberhasilan framework ini 100% independen dan tidak terikat pada satu platform spesifik. Framework dirancang untuk diadopsi oleh berbagai macam sistem (ERP, CRM, Marketing OS, dll) secara bebas.*
+## [v0.5] - Distributed Runtime
+- [ ] Multi-Node execution.
+- [ ] Agent Discovery.
+- [ ] Distributed Task Scheduler.
+
+## [v0.6] - Ecosystem
+- [ ] `@agent-runtime/plugin-openai`
+- [ ] `@agent-runtime/plugin-anthropic`
+- [ ] `@agent-runtime/plugin-gemini`
+- [ ] `@agent-runtime/plugin-kafka`
+- [ ] `@agent-runtime/plugin-redis` (Stable)
+- [ ] Persistence Providers (PostgreSQL, MongoDB).
+
+## [v1.0] - Stable
+- [ ] Production-ready API freeze.
