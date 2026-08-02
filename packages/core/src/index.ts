@@ -6,3 +6,4 @@ export { Agent } from './agent/Agent';
 export { Pipeline, PipelineStep } from './pipeline/Pipeline';
 export { AIProvider, AIProviderOptions } from './providers/AIProvider';
 export { RuntimePlugin, RuntimeProvider, RuntimeAdapter } from './plugins/Types';
+export * from './retry';

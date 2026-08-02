@@ -1,0 +1,21 @@
+{
+  "name": "@agent-runtime/plugin-rabbitmq",
+  "version": "0.3.0",
+  "description": "RabbitMQ adapter plugin for agent-runtime core.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.3"
+  },
+  "devDependencies": {
+    "@agent-runtime/core": "*",
+    "@types/amqplib": "^0.10.5",
+    "typescript": "^5.5.0"
+  },
+  "author": "anggi1991",
+  "license": "MIT"
+}

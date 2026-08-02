@@ -1,0 +1,16 @@
+{
+  "name": "rabbitmq-agent-example",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node index.ts"
+  },
+  "dependencies": {
+    "@agent-runtime/core": "*",
+    "@agent-runtime/plugin-rabbitmq": "*"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.0"
+  }
+}
