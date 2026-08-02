@@ -1,6 +1,6 @@
 # RFC: 0006 - Workflow Runtime Architecture
 
-- **Status:** Draft
+- **Status:** Accepted
 - **Author:** anggi1991 (Ecosystem Maintainer)
 - **Date:** 2026-08-03
 
@@ -14,8 +14,8 @@ RFC ini merumuskan arsitektur dasar untuk **Workflow Runtime** (v0.4). Tujuannya
 Agar tidak ada ambiguitas dalam desain dan implementasi ke depan, berikut adalah terminologi resmi yang akan digunakan:
 
 - **Workflow**: Sebuah cetak biru (*blueprint*) abstrak yang menggambarkan serangkaian aktivitas atau langkah logika bisnis.
-- **Step**: Unit komputasi terkecil di dalam Workflow yang mengeksekusi logika spesifik (misal: memanggil LLM, membaca database).
-- **Transition**: Aturan atau jalur perpindahan yang menentukan Step mana yang akan dieksekusi setelah sebuah Step selesai (atau gagal).
+- **Step**: Unit komputasi di dalam Workflow yang memiliki kontrak tegas berupa: **Input**, **Execute**, **Output**, dan **Metadata** (misal: LLM Step, HTTP Step, Approval Step, Delay Step).
+- **Transition**: Aturan atau jalur perpindahan yang menentukan Step mana yang akan dieksekusi setelah sebuah Step selesai (atau gagal). Transisi bisa memiliki **Condition**, **Guard**, **Error Path**, dan **Default Path** untuk mengakomodasi percabangan.
 - **Execution**: Aksi memproses sebuah *Workflow Instance* melalui urutan transisi hingga mencapai status terminal (selesai/gagal/dibatalkan).
 
 ---
@@ -31,7 +31,26 @@ Pemisahan ini mutlak agar *State Management* di v0.5 nanti memiliki entitas konk
 
 ---
 
-## 4. Execution Model (Agnostic)
+---
+
+## 4. Prinsip Desain
+
+**Workflow Runtime is deterministic.**
+Artinya: Dengan *Definition* yang sama, *Context* yang sama, dan *Event* yang sama, hasil *Workflow* harus sama. Prinsip deterministik ini mutlak untuk menjaga konsistensi eksekusi antar *Instance*.
+
+---
+
+## 5. Workflow Context
+
+*Workflow Instance* membutuhkan *payload* dan *state*. Agar tidak setiap *Step* merakit konteksnya secara acak, arsitektur ini membagi konteks ke dalam hierarki berikut:
+
+- **Global Context**: Konfigurasi tingkat mesin/sistem yang dibagikan antar *Workflow*.
+- **Workflow Context**: Konteks utama (*payload*) dari *Workflow Instance* yang dipertahankan selama eksekusi berjalan.
+- **Step Context**: Ruang lingkup lokal eksklusif yang hanya relevan dan bisa dimodifikasi oleh satu *Step* saat dieksekusi.
+
+---
+
+## 6. Execution Model (Agnostic)
 
 *Workflow Runtime* **TIDAK** dipaksa menjadi satu model eksekusi (misal: harus Linear atau harus DAG). Sebaliknya, arsitektur ini didesain agar bersifat **execution-model agnostic**. 
 
@@ -50,7 +69,7 @@ Dengan desain ini, *Definition* hanya peduli pada "apa" (*what*), sedangkan *Exe
 
 ---
 
-## 5. Execution Lifecycle
+## 7. Execution Lifecycle
 
 Setiap `Workflow Instance` akan melalui siklus hidup state berikut:
 
@@ -64,7 +83,17 @@ Setiap `Workflow Instance` akan melalui siklus hidup state berikut:
 
 ---
 
-## 6. Resolusi Pertanyaan Inti
+## 8. Failure Model
+
+*Workflow Runtime* mendefinisikan filosofi penanganan kesalahan (*error handling*) berjenjang ketika sebuah *Step* gagal:
+1. **Retry Policy**: Mengeksekusi ulang secara otomatis menggunakan kebijakan seperti *Exponential Backoff*.
+2. **Error Path (Continue)**: Jika *retry* gagal, *Transition* dapat dialihkan ke *Error Path* atau jalur kompensasi khusus.
+3. **Fail Workflow**: Jika kegagalan tidak tertangani oleh *Error Path*, status *Workflow* dinaikkan menjadi `Failed`.
+4. **Compensation**: Membatalkan efek samping dari *Step* sebelumnya jika *Workflow* dibatalkan (akan diimplementasikan oleh *Step* khusus).
+
+---
+
+## 9. Resolusi Pertanyaan Inti
 
 **1. Apa hubungan Workflow dengan Pipeline?**
 *Pipeline* berfokus pada aliran data (input A → fungsi 1 → fungsi 2 → output B) yang dieksekusi secara instan dan *in-memory*. *Workflow* berfokus pada **orkestrasi proses bisnis** yang bisa berumur panjang (long-running) dan mengandung perputaran kondisi (cabang/loop).
@@ -82,9 +111,9 @@ Pada `v0.4`, seluruh state dari `Workflow Instance` dipertahankan **hanya di dal
 Ya, secara arsitektur. Siklus hidup (Bab 5) menyertakan status **Waiting**. Ini menjamin struktur data sudah siap untuk dibekukan (_suspend_) dan dicairkan (_resume_). Namun mekanisme *rehydrate* dari basis data secara fisik baru direalisasikan pada v0.5.
 
 **6. Bagaimana kontrak RuntimeEvent berinteraksi dengan Workflow?**
-*Workflow* adalah warga kelas satu di ekosistem event:
-- **Trigger**: `Workflow Instance` dapat dipicu (*Created/Queued*) oleh masuknya sebuah `RuntimeEvent` tertentu.
-- **Emission**: Setiap kali *Step* selesai, *Failed*, atau *Completed*, sistem menembakkan `RuntimeEvent` (contoh: `workflow.step.completed`). Agen atau sub-sistem lain dapat memantau (_subscribe_) event ini.
+*Workflow* berinteraksi dengan dunia luar melalui bus event. Terdapat pemisahan tegas:
+- **External Event**: Event pemicu eksternal (contoh: `customer.created`) yang dikonsumsi oleh *Workflow Runtime* untuk memulai atau melanjutkan *Instance*.
+- **Internal Event**: Event sistem (*emission*) yang otomatis ditembakkan oleh mesin *Workflow* setiap kali *Step* beralih status (contoh: `workflow.step.completed`). Pemisahan ini krusial untuk metrik dan visibilitas (_observability_).
 
 **7. Apa batas tanggung jawab v0.4 dibanding v0.5?**
 - **v0.4 (Workflow Runtime)**: Mendefinisikan skema, kontrak *Step*, siklus hidup (Lifecycle), dan strategi eksekusi murni di tingkat komputasi.
@@ -92,7 +121,7 @@ Ya, secara arsitektur. Siklus hidup (Bab 5) menyertakan status **Waiting**. Ini 
 
 ---
 
-## 7. Diagram Arsitektur
+## 10. Diagram Arsitektur
 
 Berikut adalah diagram alur interaksi antara *Event*, *Runtime*, dan *Workflow*:
 
@@ -115,17 +144,18 @@ sequenceDiagram
 
 ---
 
-## 8. Non Goals
+## 11. Non Goals
 
 Untuk menjaga fokus pengembangan `v0.4`, poin-poin berikut berada **di luar** cakupan *milestone* ini:
 - Tidak ada persistensi database (semua *instance state* berjalan di memori).
+- **Tidak ada distributed transactions (bukan Saga Orchestration engine otomatis).**
 - Tidak ada kemampuan *Distributed Execution* antar node.
 - Tidak ada pembuatan antarmuka pengguna grafis (*Visual Editor*) untuk DSL.
 - Tidak ada penjadwalan waktu (Crontab/Scheduler).
 
 ---
 
-## 9. Success Criteria
+## 12. Success Criteria
 
 RFC ini, dan implementasi dari `v0.4` nantinya, dianggap berhasil dan siap di-merger ke Stable apabila:
 
@@ -134,3 +164,4 @@ RFC ini, dan implementasi dari `v0.4` nantinya, dianggap berhasil dan siap di-me
 3. [ ] Eksekusi `Workflow` menghasilkan dan merespons `RuntimeEvent`.
 4. [ ] Arsitektur memungkinkan pengujian unit (_testable_) pada tiap `Step` secara independen.
 5. [ ] Implementasi 100% berjalan tanpa bergantung pada adapter persistensi eksternal (Database-free untuk v0.4).
+6. [ ] **Workflow dapat di-debug (Debuggability).**
