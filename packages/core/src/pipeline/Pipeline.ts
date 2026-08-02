@@ -2,6 +2,10 @@ import { RuntimeEvent } from '../events/EventBus';
 
 export type PipelineStep = (event: RuntimeEvent) => Promise<RuntimeEvent>;
 
+/**
+ * @experimental
+ * This API may change before v1.0. It will be replaced by the Workflow Runtime in v0.4.
+ */
 export class Pipeline {
   private steps: PipelineStep[] = [];
 

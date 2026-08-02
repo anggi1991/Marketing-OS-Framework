@@ -20,17 +20,23 @@ Dokumen ini menjelaskan evolusi **fitur** dari framework `@agent-runtime/core` (
 - [ ] Retry Mechanism (Exponential Backoff).
 - [ ] Dead-Letter Queues (DLQ) support.
 
-## [v0.4] - Workflow
-- [ ] Workflow DSL (JSON/YAML based).
-- [ ] State Machine Execution.
-- [ ] Human Approval / Human-in-the-loop steps.
+## [v0.4] - Workflow Runtime
+- [ ] Workflow Definition
+- [ ] Execution Graph
+- [ ] Step
+- [ ] Condition
 
-## [v0.5] - Distributed Runtime
-- [ ] Multi-Node execution.
-- [ ] Agent Discovery.
-- [ ] Distributed Task Scheduler.
+## [v0.5] - State Management
+- [ ] State Machine
+- [ ] Resume
+- [ ] Persistence
 
-## [v0.6] - Ecosystem
+## [v0.6] - Human Workflow
+- [ ] Approval
+- [ ] Timeout
+- [ ] Escalation
+
+## [v0.7] - Ecosystem
 - [ ] `@agent-runtime/plugin-openai`
 - [ ] `@agent-runtime/plugin-anthropic`
 - [ ] `@agent-runtime/plugin-gemini`
