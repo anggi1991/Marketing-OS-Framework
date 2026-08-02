@@ -1,7 +1,13 @@
 import { EventBus, LuminaEvent } from './events/EventBus';
+import { EventBusAdapter } from './events/adapters/EventBusAdapter';
+import { InMemoryAdapter } from './events/adapters/InMemoryAdapter';
 import { Agent } from './agent/Agent';
 import { AIProvider } from './providers/AIProvider';
 import { Pipeline } from './pipeline/Pipeline';
+
+export interface RuntimeOptions {
+  eventBusAdapter?: EventBusAdapter;
+}
 
 export class Runtime {
   private bus: EventBus;
@@ -10,8 +16,9 @@ export class Runtime {
   private pipelines: Map<string, Pipeline> = new Map();
   private isRunning: boolean = false;
 
-  constructor() {
-    this.bus = new EventBus();
+  constructor(options?: RuntimeOptions) {
+    const adapter = options?.eventBusAdapter || new InMemoryAdapter();
+    this.bus = new EventBus(adapter);
   }
 
   /**
@@ -41,17 +48,18 @@ export class Runtime {
   /**
    * Starts the runtime, initializing all agents and pipelines.
    */
-  public start(): void {
+  public async start(): Promise<void> {
     if (this.isRunning) return;
 
     if (!this.aiProvider) {
-      console.warn('[Lumina Runtime] Starting without an AI Provider configured.');
+      console.warn('[Runtime] Starting without an AI Provider configured.');
     }
+
+    // Connect the underlying event bus adapter
+    await this.bus.connect();
 
     // Initialize all agents
     for (const agent of this.agents) {
-      // Create a dummy provider if none exists, just to prevent crashes
-      // In a real scenario, this might throw an error if AI is mandatory for the agent.
       const provider = this.aiProvider || ({} as AIProvider);
       agent.initialize(this.bus, provider);
     }
@@ -64,7 +72,17 @@ export class Runtime {
     }
 
     this.isRunning = true;
-    console.log('[Lumina Runtime] Started successfully.');
+    console.log('[Runtime] Started successfully.');
+  }
+
+  /**
+   * Stops the runtime and disconnects adapters.
+   */
+  public async stop(): Promise<void> {
+    if (!this.isRunning) return;
+    await this.bus.disconnect();
+    this.isRunning = false;
+    console.log('[Runtime] Stopped successfully.');
   }
 
   /**
@@ -74,3 +92,4 @@ export class Runtime {
     await this.bus.publish(event);
   }
 }
+

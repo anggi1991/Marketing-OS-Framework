@@ -54,7 +54,7 @@ async function bootstrap() {
   runtime.register(new LeadScoringAgent());
   
   // Start the runtime
-  runtime.start();
+  await runtime.start();
 
   // Simulate an external system (e.g., webhook) firing an event
   setTimeout(() => {

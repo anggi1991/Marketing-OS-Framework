@@ -8,17 +8,34 @@ export interface LuminaEvent<T = any> {
 
 export type EventHandler = (event: LuminaEvent) => Promise<void> | void;
 
+import { EventBusAdapter } from './adapters/EventBusAdapter';
+
 export class EventBus {
-  private handlers: Map<string, EventHandler[]> = new Map();
+  private adapter: EventBusAdapter;
+
+  constructor(adapter: EventBusAdapter) {
+    this.adapter = adapter;
+  }
+
+  /**
+   * Initializes the event bus connection.
+   */
+  public async connect(): Promise<void> {
+    await this.adapter.connect();
+  }
+
+  /**
+   * Closes the event bus connection.
+   */
+  public async disconnect(): Promise<void> {
+    await this.adapter.disconnect();
+  }
 
   /**
    * Subscribe to a specific event type.
    */
   public subscribe(eventType: string, handler: EventHandler): void {
-    if (!this.handlers.has(eventType)) {
-      this.handlers.set(eventType, []);
-    }
-    this.handlers.get(eventType)?.push(handler);
+    this.adapter.subscribe(eventType, handler);
   }
 
   /**
@@ -31,11 +48,7 @@ export class EventBus {
       timestamp: event.timestamp || Date.now(),
     };
 
-    const typeHandlers = this.handlers.get(event.type) || [];
-    const wildcardHandlers = this.handlers.get('*') || [];
-
-    const allHandlers = [...typeHandlers, ...wildcardHandlers];
-
-    await Promise.all(allHandlers.map(handler => handler(enrichedEvent)));
+    await this.adapter.publish(enrichedEvent);
   }
 }
+
