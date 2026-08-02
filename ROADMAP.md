@@ -1,36 +1,32 @@
 # Roadmap
 
-This document outlines the high-level goals and upcoming features for the **Agent Runtime Core** framework. Our goal is to build a robust, distributed AI Workflow Runtime.
+This document outlines the high-level goals and upcoming milestones for the **@agent-runtime** framework.
 
-## [v0.1.0] - Foundation (Current)
-- [x] In-memory `EventBus` pub/sub engine.
-- [x] Abstract `Agent` class for autonomous workers.
-- [x] Sequential `Pipeline` processing.
-- [x] `AIProvider` interface (agnostic to OpenAI/Anthropic/Gemini).
-- [x] Unified `Runtime` entry point.
+## ✅ Phase 1: Core Stabilization (v0.3.0)
+- [x] Monorepo Architecture with NPM Workspaces
+- [x] Extensible Plugin Architecture (`runtime.use()`)
+- [x] Provider & Adapter Capability Registry
+- [x] RFC Process Initialization
+- [x] Comprehensive SDK Documentation
+- [x] Strict Semantic Versioning Policy
+- [x] Compatibility Matrix
 
-## [v0.2.0] - Scalability
-- [ ] Redis-backed distributed `EventBus`.
-- [ ] Persistent event logging and observability hooks.
+## ✅ Phase 2: Alpha Release
+- [x] Local `npm pack` validation
+- [x] Release notes preparation
+- [x] CHANGELOG tracking
 
-## [v0.3.0] - Enterprise Messaging
-- [ ] RabbitMQ integration for high-throughput event queues.
-- [ ] Dead-letter queues and retry mechanisms.
+## 🔄 Phase 3: Open Source Growth
+Fokus pada penerimaan dan umpan balik komunitas.
+- [ ] Publish `@agent-runtime/core` ke NPM Registry publik.
+- [ ] Menerima dan merespons Issues & Pull Requests dari komunitas.
+- [ ] Membangun website dokumentasi dan panduan interaktif.
+- [ ] Stabilisasi API publik berdasarkan *real-world feedback*.
 
-## [v0.4.0] - Extensibility
-- [ ] Official Plugin SDK for custom connectors.
-- [ ] Provider packages (`@agent-runtime/openai`, `@agent-runtime/anthropic`).
+## 🔄 Phase 4: Ecosystem Expansion
+Ekspansi plugin secara horizontal.
+- [ ] `@agent-runtime/plugin-rabbitmq` (Enterprise Queues)
+- [ ] `@agent-runtime/plugin-kafka` (High-Throughput Streaming)
+- [ ] `@agent-runtime/plugin-workflow` (Declarative JSON/YAML Workflows)
 
-## [v0.5.0] - Orchestration
-- [ ] Stateful Workflow Engine (DAG execution).
-- [ ] Human-in-the-loop (Approval) steps.
-
-## [v0.6.0] - Distributed Systems
-- [ ] Distributed Runtime (multi-node agent execution).
-- [ ] Agent registry and discovery.
-
-## [v1.0.0] - Stable
-- [ ] Production-ready API freeze.
-- [ ] Comprehensive documentation and community examples.
-
-*Note: The roadmap is subject to change based on community feedback and contributions.*
+*Catatan: Keberhasilan framework ini 100% independen dan tidak terikat pada satu platform spesifik. Framework dirancang untuk diadopsi oleh berbagai macam sistem (ERP, CRM, Marketing OS, dll) secara bebas.*
