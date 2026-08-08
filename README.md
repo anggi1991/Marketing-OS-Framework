@@ -7,9 +7,9 @@
 
 An Open-Source **AI Workflow Runtime** for generic business orchestration. Build autonomous agents, event pipelines, and AI workflows for any domain (Marketing, ERP, CRM, HRIS, Ticketing, Automation).
 
-## 🚀 Why Marketing OS Framework?
+## 🚀 Why Agent Runtime?
 
-Marketing OS Framework provides the abstract interfaces and event bus required to build scalable, multi-agent orchestrations.
+Agent Runtime provides the abstract interfaces and event bus required to build scalable, multi-agent orchestrations.
 
 ### Features
 ✓ **Universal Event Bus**: Generic pub/sub for all business events.
